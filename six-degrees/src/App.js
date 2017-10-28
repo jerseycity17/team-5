@@ -1,35 +1,66 @@
 import React, { Component } from 'react';
-import { BrowserRouter, Route , Switch, Link} from 'react-router-dom';
+import { Route, Switch } from 'react-router-dom';
+import logo from './logo.svg';
 import './App.css';
-import ReactDOM from 'react-dom';
-import {Navbar, Nav, NavItem, NavDropdown, MenuItem, } from 'react-bootstrap';
-import NavbarInstance from "./NavbarInstance.js";
-import CarouselInstance from "./CarouselInstance";
+import Login from './Login';
+
 
 class App extends Component {
   constructor() {
     super();
     this.state = {
+      email: '',
+      password: '',
       signed_in: false,
-      userId: null,
+      userId: 0,
     };
+    this.loginButtonClick = this.loginButtonClick.bind(this);
+    this.handleEmailChange = this.handleEmailChange.bind(this);
+    this.handlePasswordChange = this.handlePasswordChange.bind(this);
+  }
+
+  handleEmailChange(event) {
+    this.setState({
+      email: event.target.value,
+    })
+  }
+
+  handlePasswordChange(event) {
+    this.setState({
+      password: event.target.value,
+    })
+  }
+
+  loginButtonClick() {
+    console.log('user tried to login with ' + this.state.email)
   }
   render() {
     return (
       <div className="App">
-      <NavbarInstance/>
-        <header className="App-header">
-          <img src="https://pbs.twimg.com/profile_images/907642405683290114/E2FU6vic.jpg"className="App-logo"/>
-          <h1 className="App-title"></h1>
-        </header>
-        <p className="App-intro">
-          <CarouselInstance/>
-        </p>
-     
+        <NavbarInstance/>
+          <header className="App-header">
+            <img src="https://pbs.twimg.com/profile_images/907642405683290114/E2FU6vic.jpg"className="App-logo"/>
+            <h1 className="App-title"></h1>
+          </header>
+          <p className="App-intro">
+            <CarouselInstance/>
+          </p>
 
-      <Switch>
-        //insert routes
-      </Switch> 
+        <Switch>
+          //insert routes
+          <Route 
+            path='/login' 
+            render={(
+              props) => (
+                <Login 
+                  handleEmailChange={this.handleEmailChange}
+                  handlePasswordChange={this.handlePasswordChange}
+                  onLoginButtonClick={this.loginButtonClick}
+                />
+              )
+            } 
+          />
+        </Switch>
       </div>
     );
   }
