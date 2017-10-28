@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{#{% block title %}Sign In{% endblock %}#}
+
+{% block page_content %}
+
+    <h2>Sign In</h2>
+
+    <div class="container">
+        <div class="well custom-well-small">
+            <p>{{ moment().format('MMMM Do YYYY, h:mm:ss a') }}.</p>
+
+            {{ wtf.quick_form(form) }}
+        </div>
+    </div>
+
+{% endblock %}
