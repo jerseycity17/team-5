@@ -1,0 +1,90 @@
+{% extends "bootstrap/base.html" %}
+
+{% block title %}Library Archives{% endblock %}
+
+{% block head %}
+
+    {{ super() }}
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+
+{% endblock %}
+
+{% block navbar %}
+
+    <div class="navbar navbar-inverse" role="navigation">
+        <div class="container">
+            <div class="navbar-header">
+{#                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">#}
+{#                    <span class="sr-only">Toggle navigation</span>#}
+{#                    <span class="icon-bar"></span>#}
+{#                    <span class="icon-bar"></span>#}
+{#                    <span class="icon-bar"></span>#}
+{#                </button>#}
+                <a class="navbar-brand" href="{{ url_for('main.index') }}">Library Archives</a>
+            </div>
+    {#        <div class="navbar-collapse collapse">#}
+    {#            <ul class="nav navbar-nav">#}
+    {#                <li><a href="{{ url_for('main.index') }}">Home</a></li>#}
+    {#            </ul>#}
+    {#        </div>#}
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block content %}
+
+    <div class="container">
+        {% for message in get_flashed_messages() %}
+        <div class="alert alert-warning">
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+            {{ message }}
+        </div>
+        {% endfor %}
+
+        {% block page_content %}{% endblock %}
+    </div>
+
+{% endblock %}
+
+{% block scripts %}
+
+    {{ super() }}
+    {{ moment.include_moment() }}
+
+    {#    Hide extra fields on page load #}
+    <script>
+        jQuery(document).ready(function () {
+            $('label[for=research_purpose], select#research_purpose').hide();
+            $('label[for=affiliation], select#affiliation').hide();
+            $('label[for=research_subject], select#research_subject').hide();
+            $('label[for=collection], select#collection').hide();
+        });
+    </script>
+
+{#    Show fields if checkboxes are checked #}
+    <script>
+        jQuery(document).ready(function() {
+            $("#library").change(function() {
+                if (this.checked) {
+                    $('label[for=research_purpose], select#research_purpose').show();
+                    $('label[for=affiliation], select#affiliation').show();
+                } else {
+                    $('label[for=research_purpose], select#research_purpose').hide();
+                    $('label[for=affiliation], select#affiliation').hide();
+                }
+            });
+            $("#archives").change(function() {
+                if (this.checked) {
+                    $('label[for=research_subject], select#research_subject').show();
+                    $('label[for=collection], select#collection').show();
+                } else {
+                    $('label[for=research_subject], select#research_subject').hide();
+                    $('label[for=collection], select#collection').hide();
+                }
+            });
+        });
+    </script>
+
+{% endblock %}
