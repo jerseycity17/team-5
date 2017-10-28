@@ -44,10 +44,12 @@ def login():
 
         if user is not None and user.verify_password(request.form['password']):
             # Credentials successfully submitted
-            response = {'is_loggedin': True, 'user_id': user.id}
-            jsonstr = json.dumps(response)
-            return jsonify(response=jsonstr)
-    return jsonify(response=json.dumps({'is_loggedin': False}))
+            # result = ['1', str(user.id)]
+            # response = {'is_loggedin': True, 'user_id': user.id}
+            # jsonstr = json.dumps(response)
+            # return ','.join(result)
+            return jsonify({'login': True, 'user_id': user.id})
+    return jsonify({'login': False, 'user_id': None})
 
 
 @main.route('/database', methods=['GET', 'POST'])
