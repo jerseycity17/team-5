@@ -1,7 +1,7 @@
 from flask import render_template, session, redirect, url_for, current_app, flash, request, Flask, jsonify, json
 from flask_login import login_required, login_user, logout_user, current_user
 from .. import db
-from ..models import User, Organization
+from ..models import User, Organization, Feed, Events
 # from ..email import send_email
 from . import main
 from .forms import LoginForm, RegistrationForm
@@ -57,3 +57,36 @@ def profile():
     user = User.query.filter_by(id=request.form['user_id']).first()
 
     return jsonify({'first_name': user.first_name, 'last_name': user.last_name, 'email': user.email})
+
+@main.route('/newevent', methods=['POST'])
+def newevent():
+    if request.method == 'POST':
+        try:
+            feed = Feed(user_id=request.form['user_id'],
+                        event_id=request.form['event_id'],
+                        organization_id=request.form['organization_id'])
+            db.session.add(feed)
+            db.session.commit()
+            return "success"
+        except:
+            return "failed to register"
+
+
+@main.route('/feed', methods=['GET'])
+def feed():
+    if request.method == 'GET':
+        # Query all events
+        feed = Feed.query.all()
+
+        user_event_organization = []
+
+        # Find join of Events and Feeds table
+        for f in feed:
+            user, event, organization = db.session.query(User, Events, Organization).filter(User.id == f.user_id). \
+                filter(Events.id == f.event_id). \
+                filter(Organization.id == f.organization_id).first()
+            something = {'first_name': user.first_name, 'last_name': user.last_name,
+                                       'organization_name': organization.name, 'event_desc': event.description}
+            user_event_organization.append(something)
+
+        return jsonify(user_event_organization)

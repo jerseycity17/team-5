@@ -25,3 +25,8 @@
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
 }
+
+#signup-form {
+  align-content: center;
+  width: 50%;
+}
