@@ -32,8 +32,27 @@ class App extends Component {
   }
 
   loginButtonClick() {
-    console.log('user tried to login with ' + this.state.email)
+    fetch('https://localhost:5000/login', {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        email: this.state.email,
+        password: this.state.password,
+      })
+      .then((jsonData) => {
+        if (jsonData[0] === false) {
+
+        }
+      })
+    })
   }
+
+  signUpButtonClick() {
+  }
+  
   render() {
     return (
       <div className="App">
