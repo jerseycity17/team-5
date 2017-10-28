@@ -1,6 +1,5 @@
 import React, { Component} from 'react';
 import ReactDOM from 'react-dom';
-import logo from './logo.svg';
 import './App.css';
 import {Navbar, Nav, NavItem, NavDropdown, MenuItem, } from 'react-bootstrap';
 var Alert = require('react-bootstrap').Alert;
