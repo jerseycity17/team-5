@@ -2,8 +2,9 @@ import React, { Component } from 'react';
 import { Route, Switch } from 'react-router-dom';
 import logo from './logo.svg';
 import './App.css';
-import Login from './Login';
-
+import Login from './Login.js';
+import NavbarInstance from "./NavbarInstance.js";
+import CarouselInstance from "./CarouselInstance.js";
 
 class App extends Component {
   constructor() {

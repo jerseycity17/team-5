@@ -19,6 +19,8 @@ const NavbarInstance = function (props){
         <NavItem eventKey={1} href="sign-up">Sign up</NavItem>
         <NavItem eventKey={2} href="sign-in">Sign in</NavItem>
       </Nav>
+      :
+
   </Navbar>
   );
 };
