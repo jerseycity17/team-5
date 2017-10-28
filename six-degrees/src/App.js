@@ -3,6 +3,7 @@ import { Route, Switch } from 'react-router-dom';
 import './App.css';
 import Login from './Login.js';
 import NavbarInstance from "./NavbarInstance.js";
+import LoggedInNavbarInstance from "./LoggedInNavbarInstance.js";
 import CarouselInstance from "./CarouselInstance.js";
 
 class App extends Component {
@@ -32,12 +33,21 @@ class App extends Component {
   }
 
   loginButtonClick() {
-    console.log('user tried to login with ' + this.state.email)
+    console.log('user tried to login with ' + this.state.email);
+    console.log('with PW: ' + this.state.password);
   }
+
   render() {
     return (
       <div className="App">
-        <NavbarInstance/>
+      {this.state.signed_in === false ?
+        <NavbarInstance
+          handleEmailChange={this.handleEmailChange}
+          handlePasswordChange={this.handlePasswordChange}
+          onLoginButtonClick={this.loginButtonClick}
+        />
+        :
+        <LoggedInNavbarInstance/>}
           <header className="App-header">
             <img src="https://pbs.twimg.com/profile_images/907642405683290114/E2FU6vic.jpg"className="App-logo"/>
             <h1 className="App-title"></h1>
