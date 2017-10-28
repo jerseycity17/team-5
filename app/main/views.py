@@ -1,4 +1,5 @@
-from flask import render_template, session, redirect, url_for, current_app, flash, request
+from flask import render_template, session, redirect, url_for, current_app, flash, request, Flask, jsonify, json
+from flask_login import login_required, login_user, logout_user, current_user
 from .. import db
 from ..models import User, Organization
 # from ..email import send_email
@@ -9,15 +10,6 @@ from datetime import datetime
 
 @main.route('/', methods=['GET', 'POST'])
 def index():
-    # organizations = Organization.query.filter()
-    # return render_template('test.html', orgos=organizations)
-
-    """
-        Renders the HTML page where users can register new accounts. If the RegistrationForm meets criteria, a new user is
-        written into the database.
-
-        :return: HTML page for registration.
-        """
     form = RegistrationForm()
     if form.validate_on_submit():
         user = User(email=(form.email.data).lower(),
@@ -27,8 +19,35 @@ def index():
         db.session.add(user)
         db.session.commit()
         flash('User successfully registered', category='success')
-        # return redirect(url_for('auth.login'))
+        return redirect(url_for('main.login'))
     return render_template('auth/register.html', form=form)
+
+
+@main.route('/register', methods=['POST'])
+def register():
+    if request.method == 'POST':
+        user = User(email=request.form['email'],
+                    password=request.form['password'],
+                    first_name=request.form['first_name'],
+                    last_name=request.form['last_name'])
+        db.session.add(user)
+        db.session.commit()
+        return "success"
+    return "failed to register"
+    # return render_template('auth/register.html', form=form)
+
+
+@main.route('/login', methods=['POST'])
+def login():
+    if request.method == 'POST':
+        user = User.query.filter_by(email=request.form['email']).first()
+
+        if user is not None and user.verify_password(request.form['password']):
+            # Credentials successfully submitted
+            response = {'is_loggedin': True, 'user_id': user.id}
+            jsonstr = json.dumps(response)
+            return jsonify(response=jsonstr)
+    return jsonify(response=json.dumps({'is_loggedin': False}))
 
 
 @main.route('/database', methods=['GET', 'POST'])
