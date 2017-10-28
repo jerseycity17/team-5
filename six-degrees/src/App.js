@@ -25,8 +25,8 @@ class App extends Component {
     this.handleEmailChange = this.handleEmailChange.bind(this);
     this.handlePasswordChange = this.handlePasswordChange.bind(this);
     this.submitClick = this.submitClick.bind(this);
-    this.handleEmailChange = this.handleEmailChange.bind(this);
-    this.handlePasswordChange = this.handlePasswordChange.bind(this);
+    this.handleSignUpEmailChange = this.handleSignUpEmailChange.bind(this);
+    this.handleSignUpPasswordChange = this.handleSignUpPasswordChange.bind(this);
     this.handleSignUpFirstNameChange = this.handleSignUpFirstNameChange.bind(this);
     this.handleSignUpLastNameChange = this.handleSignUpLastNameChange.bind(this);
   }
@@ -57,18 +57,18 @@ class App extends Component {
 
   handleSignUpFirstNameChange(event) {
     this.setState({
-      signUpFirstName: this.target.value,
+      signUpFirstName: event.target.value,
     })
   }
 
   handleSignUpLastNameChange(event) {
     this.setState({
-      signUpLastName: this.target.value,
+      signUpLastName: event.target.value,
     })
   }
 
   loginButtonClick() {
-    fetch('http://localhost:5000/login', {
+    fetch('http://127.0.0.1:5000/login', {
       method: 'POST',
       headers: {
         'Accepted': 'application/json',
@@ -115,8 +115,6 @@ class App extends Component {
   }
 
   submitClick() {
-    if (this.state.signUpEmail != '' && this.state.signUpPassword != '' &&
-        this.state.signUpFirstName != '' && this.state.signUpLastName != '') {
       fetch('http://localhost:5000/register', {
         method: 'POST',
         headers: {
@@ -129,6 +127,8 @@ class App extends Component {
               'last_name='+this.state.signUpLastName,
       })
         .then((response) => {
+
+          console.log('got response')
           return response.json()
         })
         .then((jsonData) => {
@@ -142,7 +142,6 @@ class App extends Component {
         .catch(() => {
           console.log('error')
         })
-    }
   }
   
   render() {
@@ -155,12 +154,13 @@ class App extends Component {
           onLoginButtonClick={this.loginButtonClick}
         />
         :
-        <LoggedInNavbarInstance/>}
+        <LoggedInNavbarInstance firstName={this.state.firstName} lastName={this.state.lastName}/>
+      }
           <header className="App-header">
             <img src="https://pbs.twimg.com/profile_images/907642405683290114/E2FU6vic.jpg"className="App-logo"/>
             <h1 className="App-title"></h1>
           </header>
-          <p className="App-intro">
+          <div className="App-intro">
             {!this.state.signed_in ? 
               <div>
                 <Signup 
@@ -176,7 +176,7 @@ class App extends Component {
               <div>
 
               </div> }
-          </p>
+          </div>
 
         <Switch>
           //insert routes
