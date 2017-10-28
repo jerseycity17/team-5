@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import { Route, Switch } from 'react-router-dom';
 import './App.css';
-import Login from './Login.js';
 import NavbarInstance from "./NavbarInstance.js";
 import LoggedInNavbarInstance from "./LoggedInNavbarInstance.js";
 import CarouselInstance from "./CarouselInstance.js";
+import axios from 'axios';
 
 class App extends Component {
   constructor() {
@@ -33,22 +33,28 @@ class App extends Component {
   }
 
   loginButtonClick() {
-    fetch('https://localhost:5000/login', {
+    fetch('http://localhost:5000/login', {
       method: 'POST',
       headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
+        'Accepted': 'application/json',
+        'Content-Type': 'application/x-www-form-urlencoded',
       },
-      body: JSON.stringify({
-        email: this.state.email,
-        password: this.state.password,
+      body: 'email='+this.state.email + '&' + 'password='+this.state.password,
+    })
+      .then((response) => {
+        return response.json()
       })
       .then((jsonData) => {
-        if (jsonData[0] === false) {
-
+        if (jsonData.login) {
+          this.setState({
+            signed_in: jsonData.login,
+            userId: jsonData.user_id,
+          })
         }
       })
-    })
+      .catch(() => {
+        console.log('error');
+      })
   }
 
   signUpButtonClick() {
@@ -75,18 +81,7 @@ class App extends Component {
 
         <Switch>
           //insert routes
-          <Route 
-            path='/login' 
-            render={(
-              props) => (
-                <Login 
-                  handleEmailChange={this.handleEmailChange}
-                  handlePasswordChange={this.handlePasswordChange}
-                  onLoginButtonClick={this.loginButtonClick}
-                />
-              )
-            } 
-          />
+
         </Switch>
       </div>
     );
