@@ -1,6 +1,5 @@
 import React, { Component} from 'react';
 import ReactDOM from 'react-dom';
-import logo from './logo.svg';
 import './App.css';
 import {Navbar, Nav, NavItem, NavDropdown, MenuItem, FormGroup, FormControl, Button } from 'react-bootstrap';
 import {Link} from 'react-router';
