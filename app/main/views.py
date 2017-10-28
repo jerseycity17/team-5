@@ -52,12 +52,8 @@ def login():
     return jsonify({'login': False, 'user_id': None})
 
 
-@main.route('/database', methods=['GET', 'POST'])
-def database():
-    cursor = User.query.all()
+@main.route('/profile', methods=['POST'])
+def profile():
+    user = User.query.filter_by(id=request.form['user_id']).first()
 
-    # Prints all members in database
-    # for item in cursor:
-    #     print (item.id, item.first_name, item.last_name)
-
-    return render_template('database.html', cursor=cursor, name=session.get('name'))
+    return jsonify({'first_name': user.first_name, 'last_name': user.last_name, 'email': user.email})
