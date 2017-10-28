@@ -44,6 +44,7 @@ class User(UserMixin, db.Model):
 
 
 class Organization(db.Model):
+    __tablename__ = 'organization'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64))
     mission = db.Column(db.String(128))
@@ -54,3 +55,16 @@ class Organization(db.Model):
         self.mission = mission
         self.email = email
 
+
+class Events(db.Model):
+    __tablename__ = 'events'
+    id = db.Column(db.Integer, primary_key=True)
+    description = db.Column(db.String(128))
+
+
+class Feed(db.Model):
+    __tablename__ = 'feed'
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer)
+    event_id = db.Column(db.Integer, db.ForeignKey("events.id"))
+    organization_id = db.Column(db.Integer, db.ForeignKey("organization.id"))
