@@ -33,22 +33,23 @@ class App extends Component {
   }
 
   loginButtonClick() {
+    var data = new FormData();
+    data.append('email', this.state.email);
+    data.append('password', this.state.password);
     fetch('https://localhost:5000/login', {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
-        'Content-Type': 'application/json',
+        'Content-Type': 'multipart/form-data',
+        'type': 'formData',
       },
-      body: JSON.stringify({
-        email: this.state.email,
-        password: this.state.password,
-      })
+      body: data,
+    })
       .then((jsonData) => {
         if (jsonData[0] === false) {
 
         }
       })
-    })
   }
 
   signUpButtonClick() {
@@ -75,18 +76,7 @@ class App extends Component {
 
         <Switch>
           //insert routes
-          <Route 
-            path='/login' 
-            render={(
-              props) => (
-                <Login 
-                  handleEmailChange={this.handleEmailChange}
-                  handlePasswordChange={this.handlePasswordChange}
-                  onLoginButtonClick={this.loginButtonClick}
-                />
-              )
-            } 
-          />
+
         </Switch>
       </div>
     );
