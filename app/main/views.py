@@ -32,8 +32,8 @@ def register():
                     last_name=request.form['last_name'])
         db.session.add(user)
         db.session.commit()
-        return "success"
-    return "failed to register"
+        return jsonify({'user_id': user.id})
+    return jsonify({'user_id': None})
     # return render_template('auth/register.html', form=form)
 
 
