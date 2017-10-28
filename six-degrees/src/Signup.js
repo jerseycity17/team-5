@@ -2,12 +2,11 @@ import React, { Component} from 'react';
 import ReactDOM from 'react-dom';
 import './App.css';
 import {FormGroup, Form, Col, FormControl, ControlLabel, Button, } from 'react-bootstrap';
-import {Link} from 'react-router';
 
 class Signup extends Component {
   render() {
     return(
-      <div class="container" id="signup-form">
+      <div className="container" id="signup-form">
         <Form horizontal>
           <FormGroup controlId="formHorizontalEmail">
             <Col componentClass={ControlLabel} sm={2}>
@@ -45,13 +44,9 @@ class Signup extends Component {
             </Col>
           </FormGroup>
 
-          <FormGroup>
             <Col smOffset={1} sm={10}>
-              <Button type="submit" onClick={this.props.onSubmitClick}>
-                Sign Up
-              </Button>
+              <Button onClick={this.props.onSubmitClick}>Sign Up</Button>
             </Col>
-          </FormGroup>
         </Form>
       </div>
 

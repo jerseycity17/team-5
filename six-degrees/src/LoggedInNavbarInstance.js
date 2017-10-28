@@ -20,8 +20,8 @@ class NavbarInstance extends Component {
     <Nav>
       <NavItem eventKey={1} Link="/src/Feed">Feed</NavItem>
       <NavItem eventKey={2} Link="/src/Profile">Profile</NavItem>
-      <NavItem eventKey={3}>{this.props.firstName}</NavItem>
-      <NavItem eventKey={4}>{this.props.lastName}</NavItem>
+      <NavItem eventKey={3} id="nametag">{this.props.firstName}</NavItem>
+      <NavItem eventKey={4} id="nametag">{this.props.lastName}</NavItem>
     </Nav>
   </Navbar>
 
