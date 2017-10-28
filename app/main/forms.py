@@ -1,4 +1,5 @@
-from flask_wtf import FlaskForm
+from flask_wtf import FlaskForm as Form
+from ..models import User, Organization
 # from wtforms import StringField, SubmitField
 from wtforms.fields import (
     StringField,
@@ -7,113 +8,71 @@ from wtforms.fields import (
     SubmitField,
     DateTimeField,
     BooleanField,
+    PasswordField,
 )
-from wtforms.validators import Required, DataRequired, Optional
+from wtforms import ValidationError
+from wtforms.validators import DataRequired, Length, Email, EqualTo, Required, Optional
+from flask import current_app
 
 
-class Form(FlaskForm):
-    class Meta:
-        def bind_field(self, form, unbound_field, options):
-            """
-            Strip field values of whitespace.
-            http://stackoverflow.com/questions/26232165/automatically-strip-all-values-in-wtforms
-            """
-            filters = unbound_field.kwargs.get('filters', [])
-            filters.append(_strip_filter)
-            return unbound_field.bind(form=form, filters=filters, **options)
+class LoginForm(Form):
+    """Used for registered users to log into the system."""
+    email = StringField('Email', validators=[DataRequired(), Length(1, 64)])
+    password = PasswordField('Password', validators=[DataRequired()])
+    submit = SubmitField('Log In')
 
 
-def _strip_filter(value):
-    """
-    Call strip() on given value if possible.
-    :return: stripped or unaltered value
-    """
-    if value is not None and hasattr(value, 'strip'):
-        return value.strip()
-    return value
+class RegistrationForm(Form):
+    """Used to register new users into the system."""
+    email = StringField('Email', validators=[DataRequired(), Length(1, 64), Email()])
+    first_name = StringField("First name")
+    last_name = StringField("Last name")
+    password = PasswordField('Password', validators=[
+        DataRequired(), EqualTo('password2', message='Passwords must match')])
+    password2 = PasswordField('Confirm password', validators=[DataRequired()])
+    submit = SubmitField('Register')
 
+    def validate_email(self, email_field):
+        """
+        Verifies that e-mails used for registration do not already exist in the system.
 
-# class NameForm(FlaskForm):
-#     name = StringField('What is your name?', validators=[Required()])
-#     submit = SubmitField('Submit')
+        :param email_field:
+        :return:
+        """
+        user = User.query.filter_by(email=email_field.data).first()
+        if user:
+            if user.email:
+                current_app.logger.error('{} tried to register user with email {} but user already exists.'.format(
+                    user.email, email_field.data))
+            else:
+                current_app.logger.error('Anonymous user tried to register user with email {} but user already exists.'.
+                                         format(email_field.data))
+            raise ValidationError('An account with this email address already exists')
 
+    def validate_password(self, password_field):
+        """
+        Used to verify that password meets security criteria.
 
-class Form(Form):
-    # General Form
-    first_name = StringField('First Name*', validators=[DataRequired()])
-    last_name = StringField("Last Name*", validators=[DataRequired()])
-    email = StringField("Email", validators=[Optional()])
-    phone = IntegerField("Phone", validators=[Optional()])
-    address = StringField("Address", validators=[Optional()])
-    city = StringField("City", validators=[Optional()])
-    state = SelectField(
-        "State",
-        choices=[
-            ('New York', 'NY'),
-            ('New Jersey', 'NJ'),
-            ('Florida', 'FL')
-        ], validators=[Optional()])
-    zipcode = IntegerField("Zipcode", validators=[Optional()])
-    # affiliation = SelectField(
-    #     "Affiliation",
-    #     choices=[
-    #         ('1', '1'),
-    #         ('2', '2'),
-    #         ('3', '3')
-    #     ], validators=[Optional()])
-    library = BooleanField("Library", validators=[Optional()])
-    archives = BooleanField("Archives", validators=[Optional()])
-    genealogy = BooleanField("Genealogy", validators=[Optional()])
+        :param password_field: password field
+        :return: A validation message if password is not secure.
+        """
+        if len(password_field.data) < 8:
+            raise ValidationError('Your password must be 8 or more characters')
 
-    # Library Form
-    research_purpose = SelectField(
-        "Research Purpose",
-        choices=[
-            ('', '\<Select a choice\>'),
-            ('City Agency', 'City Agency'),
-            ('Genealogy', 'Genealogy'),
-            ('Academic', 'Academic'),
-            ('Film/Media', 'Film/Media'),
-            ('Publication Book/Article', 'Publication Book/Article'),
-            ('Legal', 'Legal'),
-            ('Other', 'Other')
-        ], validators=[Optional()])
-    affiliation = SelectField(
-        "Affiliation",
-        choices=[
-            ('1', '1'),
-            ('2', '2'),
-            ('3', '3')
-        ], validators=[Optional()])
+        has_num = False
+        has_capital = False
+        for i in password_field.data:
+            if i.isdigit():
+                has_num = True
+            if i.isupper():
+                has_capital = True
 
-    # Archives Form
-    research_subject = SelectField(
-        "Research Subject",
-        choices=[
-            ('Administration', 'Administration'),
-            ('Birth/Marriage/Death', 'Birth/Marriage/Death'),
-            ('Buildings/Property Records', 'Buildings/Property Records'),
-            ('City Ordinances/Laws', 'City Ordinances/Laws'),
-            ('Civil Rights', 'Civil Rights'),
-            ('Courts/Criminal History', 'Courts/Criminal History'),
-            ('Famous Persons', 'Famous Persons'),
-            ('Ethnic Groups/Population Studies', 'Ethnic Groups/Population Studies'),
-            ('International', 'International'),
-            ('Health', 'Health'),
-            ('Landmarks', 'Landmarks'),
-            ('Mayoral Records', 'Mayoral Records'),
-            ('Old Town/Pre-consolidation', 'Old Town/Pre-consolidation'),
-            ('Transit/Transportation', 'Transit/Transportation'),
-            ('Wartime History', 'Wartime History'),
-            ('Welfare', 'Welfare'),
-            ('WPA', 'WPA')
-        ], validators=[Optional()])
-    collection = SelectField(
-        "Collection",
-        choices=[
-            ('1', '1'),
-            ('2', '2'),
-            ('3', '3')
-        ], validators=[Optional()])
+        if not (has_num or has_capital):
+            raise ValidationError('Passwords must contain at least one number and one capital letter')
 
-    submit = SubmitField()
+        if not has_num:
+            raise ValidationError('Password must contain at least one number')
+
+        if not has_capital:
+            raise ValidationError('Password must contain at least one capital letter')
+
